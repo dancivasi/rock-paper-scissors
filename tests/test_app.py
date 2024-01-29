@@ -1,21 +1,23 @@
-from app import Player, CHOICES, Game
+from app import RockPaperScissors, Player
 import pytest
-
 
 @pytest.fixture()
 def game():
-    player1 = Player("Simon", "Vasile")
-    player2 = Player("Adrian", "Moloce")
-    player1.draw()
-    player2.draw()
-    game = Game()
-    return game.decide_winner(player1, player2)
+    game = RockPaperScissors()
+    game.player1 = Player("Vasi")
+    game.player2 = Player("Adrian")
+    return game
 
-def test_check_if_playerone_draws_something():
-    assert Player("Simon", "Vasile").draw() in CHOICES
-
-def test_if_playertwo_draws_something():
-    assert Player("Moloce", "Adrian").draw() in CHOICES
-
-def test_if_game_can_tie_or_win(game):
-    assert game == "Tie" or game == "Simon Vasile Wins" or game == "Adrian Moloce Wins"
+@pytest.mark.parametrize(
+    "draw1, draw2, expected",
+    [
+        ("ROCK", "SCISSORS", "Vasi wins with ROCK"),
+        ("PAPER", "ROCK", "Vasi wins with PAPER"),
+        ("SCISSORS", "PAPER", "Vasi wins with SCISSORS"),
+        ("ROCK", "ROCK", "Tie"),
+        ("ROCK", "paper", "Adrian wins with PAPER"),
+        ("asdasidjasiodajsd", "aksjdhaiksdhiasd", "invalid options")
+    ]
+)
+def test_rock_beat_scissors(game, draw1, draw2, expected):
+    assert game.play(draw1, draw2) == expected
